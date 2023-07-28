@@ -1,15 +1,12 @@
 import { ProductButtons, ProductCard, ProductImage, ProductTitle } from '../components';
+import { products } from '../data/products';
+import { useShoppingCart } from '../hooks/useShoppingCart';
 import '../styles/custom-styles.css'
 
 
-const product = {
-    id: '1',
-    title: 'Coffee',
-    img: './coffee-mug.png'
-}
-
-
 export const ShoppingPage = () => {
+
+    const{ onProductCountChange, shoppingCart } = useShoppingCart()
 
     return (
         <div>
@@ -20,57 +17,56 @@ export const ShoppingPage = () => {
                 flexDirection: "row",
                 flexWrap: "wrap",
             }}>
-                
-                {/* Mediante propiedades */}
-                <ProductCard 
-                    product={ product }
-                    className="bg-dark text-white"    
-                >
-                    <ProductCard.Image      className="custom-image"/>
-                    <ProductCard.Title      className="text-bold"/>
-                    <ProductCard.Buttons    className="custom-buttons" /> 
-                </ProductCard>
 
-                {/* Mediante componentes */}
-                <ProductCard 
-                    product={ product }
-                    className= 'bg-dark text-white '
+                {
+                    products.map(product => (
+                        <ProductCard
+                            key={product.id}
+                            product={product}
+                            className='bg-dark text-white'
+                            onChange={onProductCountChange}
+                            value={ shoppingCart[product.id]?.count || 0}
+                        >
+                            <ProductImage className="custom-image" />
+                            <ProductTitle className="text-bold" />
+                            <ProductButtons className="custom-buttons" />
+                        </ProductCard>
+                    ))
+                }
 
-                >
-                    <ProductImage className="custom-image"/>
-                    <ProductTitle 
-                        title={ "Café"}
-                        className="text-bold"
-                    />
-                    <ProductButtons className="custom-buttons"/> 
-                </ProductCard>
-
-                {/* Mediante estilos en línea */}
-                <ProductCard 
-                    product={ product }
-                    style={{
-                        backgroundColor: '#70D1F8'
-                    }}    
-                >
-                    <ProductImage 
-                        style={{
-                            boxShadow: '10px 10px 10px rgba(0,0,0,0.2)'
-                        }}
-                    />
-                    <ProductTitle 
-                        title={ "Café"}
-                        style={{
-                            fontWeight: 'bold'
-                        }}
-                    />
-                    <ProductButtons 
-                        style={{
-                            display:'flex',
-                            justifyContent: 'end'
-                        }}
-                    /> 
-                </ProductCard>
             </div>
+
+            <div className="shooping-cart">
+                {
+                    Object.entries(shoppingCart).map(([key, product]) => (
+                        <ProductCard
+                            key={key}
+                            product={product}
+                            className='bg-dark text-white'
+                            style={{ width: '100px' }}
+                            onChange={ onProductCountChange }
+                            value={ product.count }
+                        >
+                            <ProductImage className="custom-image" />
+                            <ProductButtons
+                                className="custom-buttons"
+                                style={{
+                                    display: "flex",
+                                    justifyContent: 'center'
+                                }}
+                            />
+                        </ProductCard>
+                    ))
+                }
+            </div>
+
+
+
+            {/* <div>
+                <code>
+                    {JSON.stringify(shoppingCart, null, 5)}
+                </code>
+            </div> */}
 
         </div>
     )
